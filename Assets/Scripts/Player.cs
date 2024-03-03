@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+
     public float Hp;
     public float Damage;
     public float AtackSpeed;
@@ -12,9 +13,28 @@ public class Player : MonoBehaviour
     private float lastAttackTime = 0;
     private bool isDead = false;
     public Animator AnimatorController;
+    private float speed = 5.0f;
 
     private void Update()
     {
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            transform.Translate(Vector3.forward * Time.deltaTime * speed);
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            transform.Translate(Vector3.back * Time.deltaTime * speed);
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Translate(Vector3.left * Time.deltaTime * speed);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.Translate(Vector3.right * Time.deltaTime * speed);
+        }
+
         if (isDead)
         {
             return;
@@ -54,21 +74,20 @@ public class Player : MonoBehaviour
 
         }
 
-        if (closestEnemie != null)
+        // Removed auto attack
+        if (Input.GetMouseButtonDown(0))
         {
             var distance = Vector3.Distance(transform.position, closestEnemie.transform.position);
-            if (distance <= AttackRange)
+            if (Time.time - lastAttackTime > AtackSpeed)
             {
-                if (Time.time - lastAttackTime > AtackSpeed)
-                {
-                    //transform.LookAt(closestEnemie.transform);
-                    transform.transform.rotation = Quaternion.LookRotation(closestEnemie.transform.position - transform.position);
+                //transform.LookAt(closestEnemie.transform);
+                transform.transform.rotation = Quaternion.LookRotation(closestEnemie.transform.position - transform.position);
 
-                    lastAttackTime = Time.time;
-                    closestEnemie.Hp -= Damage;
-                    AnimatorController.SetTrigger("Attack");
-                }
+                lastAttackTime = Time.time;
+                closestEnemie.Hp -= Damage;
+                AnimatorController.SetTrigger("Attack");
             }
+  
         }
     }
 
